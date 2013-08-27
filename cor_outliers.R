@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript --verbose
+-#!/usr/bin/Rscript --verbose
 
 ###This script does the quantile approach to look at parallel patterns of divergence.
 ###In addition, it also looks at over-representation of GO terms in the list of the least or most divergence genes.
@@ -220,24 +220,23 @@ top = seq(0,1,by = 0.05)
 
 for(t in 1:20)
 {
-#q1_b = 1/20 * t; q1_a = 1/20 * (t-1)
-#q2_b = 1/20 * t; q2_a = 1/20 * (t-1)
+#q1_b = 1/20 * t; q1_a = 1/20 * (t-1) #for fixed quantile of a value of 0.05 fst, from 0 to 1.
+#q2_b = 1/20 * t; q2_a = 1/20 * (t-1) #for fixed quantile of a value of 0.05 fst, from 0 to 1.
 un = unique_genes[unique_genes[,2] != 0,]; un = un[un[,3] != 0,];outliers_genes[t,1] = top[2] * top[2] * nrow(un) #expected polym in both comp...
-#un = unique_genes[unique_genes[,2] != 0,]; un = un[un[,3] != 0,];outliers_genes[t,1] = (length(un[(un[,2] >= q1_a) & (un[,2] < q1_b),2]) *  length(un[(un[,3] >= q2_a) & (un[,3] < q2_b),3]) )  / nrow(un) #expected polym in both comp...
+#un = unique_genes[unique_genes[,2] != 0,]; un = un[un[,3] != 0,];outliers_genes[t,1] = (length(un[(un[,2] >= q1_a) & (un[,2] < q1_b),2]) *  length(un[(un[,3] >= q2_a) & (un[,3] < q2_b),3]) )  / nrow(un) #expected polym in both comp for fixed quantile of a value of 0.05 fst, from 0 to 1.
 
 q1_a = quantile(un[,2],top[t],na.rm = T);q1_b = quantile(un[,2],top[t+1],na.rm = T)
 q2_a = quantile(un[,3],top[t],na.rm = T);q2_b = quantile(un[,3],top[t+1],na.rm = T)
 outliers_genes[t,2] = length(un[(un[,2] >= q1_a) & (un[,2] < q1_b) & (un[,3] >= q2_a) & (un[,3] < q2_b),2]) #how many in same quantile in comparison1 and 2? 
-
 un = unique_genes[unique_genes[,3] != 0,]; un = un[un[,4] != 0,];outliers_genes[t,3] = top[2] * top[2] * nrow(un) #expected polym in both comp...
 #un = unique_genes[unique_genes[,3] != 0,]; un = un[un[,4] != 0,];outliers_genes[t,3] = (length(un[(un[,4] >= q1_a) & (un[,4] < q1_b),4]) *  length(un[(un[,3] >= q2_a) & (un[,3] < q2_b),3]) )  /nrow(un) #expected polym in both comp...
 
 q1_a = quantile(un[,3],top[t],na.rm = T);q1_b = quantile(un[,3],top[t+1],na.rm = T)
 q2_a = quantile(un[,4],top[t],na.rm = T);q2_b = quantile(un[,4],top[t+1],na.rm = T)
 outliers_genes[t,4] = length(un[(un[,3] >= q1_a) & (un[,3] < q1_b) & (un[,4] >= q2_a) & (un[,4] < q2_b),2]) #how many in same quantile in comparison1 and 2? 
-
 un = unique_genes[unique_genes[,2] != 0,]; un = un[un[,4] != 0,];outliers_genes[t,5] = top[2] * top[2] * nrow(un) #expected polym in both comp...
-#un = unique_genes[unique_genes[,2] != 0,]; un = un[un[,4] != 0,];outliers_genes[t,5] = (length(un[(un[,2] >= q1_a) & (un[,2] < q1_b),2]) *  length(un[(un[,4] >= q2_a) & (un[,4] < q2_b),4]) )  /nrow(un) #expected polym in both comp...
+#un = unique_genes[unique_genes[,2] != 0,]; un = un[un[,4] != 0,];outliers_genes[t,5] = (length(un[(un[,2] >= q1_a) & (un[,2] < q1_b),2]) *  length(un[(un[,4] >= q2_a) & (un[,4] < q2_b),4]) )  /nrow(un) 
+#expected polym in both comp...
 q1_a = quantile(un[,2],top[t],na.rm = T);q1_b = quantile(un[,2],top[t+1],na.rm = T)
 q2_a = quantile(un[,4],top[t],na.rm = T);q2_b = quantile(un[,4],top[t+1],na.rm = T)
 outliers_genes[t,6] = length(un[(un[,2] >= q1_a) & (un[,2] < q1_b) & (un[,4] >= q2_a) & (un[,4] < q2_b),2]) #how many in same quantile in comparison1 and 2? 
@@ -279,32 +278,27 @@ outliers_window[t,6] = length(un[(un[,2] >= q1_a) & (un[,2] < q1_b) & (un[,4] >=
 ### per gene
 par(mar = c(6,6,2,2))  
 plot(c(2:21),outliers_genes[,6]/outliers_genes[,5],col = "darkblue", ylim= c(0,4.5),ylab = "", xlab = "", xaxt = "n",yaxt = "n",lwd = 3,font = 2)
-points(c(2:21),outliers_genes[,4]/outliers_genes[,3],lwd = 3, pch = 8,col = "darkgreen")
-points(c(2:21),outliers_genes[,2]/outliers_genes[,1],lwd = 3, pch = 2,col = "#00000099")
+#plot(c(2:21)[outliers_genes[,6] != 0],outliers_genes[outliers_genes[,6] != 0,6]/outliers_genes[outliers_genes[,6] != 0,5],xlim = c(2,21),col = "darkblue", ylim= c(0,11),ylab = "", xlab = "", xaxt = "n",yaxt = "n",lwd = 3,font = 2)
+points(c(2:21)[outliers_genes[,4] != 0],outliers_genes[outliers_genes[,4] != 0,4]/outliers_genes[outliers_genes[,4] != 0,3],lwd = 3, pch = 8,col = "darkgreen")
+points(c(2:21)[outliers_genes[,2] != 0],outliers_genes[outliers_genes[,2] != 0,2]/outliers_genes[outliers_genes[,2] != 0,1],lwd = 3, pch = 2,col = "#00000099")
 lm_xxy = lm((outliers_genes[,6]/outliers_genes[,5])~c(2:21)+I(c(2:21)^2));qftn <- function(x) lm_xxy$coefficients[1] + lm_xxy$coefficients[2]*x + lm_xxy$coefficients[3]*x^2;curve(qftn, 2, 21,col = "darkblue",,add = T, lwd = 3)
 
 axis(1,at = c(1:21)+0.5, labels = paste( seq(0,100,by = 5), "%", sep = ""), las = 2, pos = -0.3)
+#axis(1,at = c(1:21)+0.5, labels = seq(0,1,by = 0.05), las = 2, pos = -0.3)
+#axis(1,at = c(1:21)+0.5, labels = seq(0,1,by = 0.05), las = 2, pos = -0.6)
 axis(1, at = 12,labels = "Quantiles",font.axis = 2, line = 3.5,cex.axis = 2, tick = F)
 axis(2,at = c(0,1,2,3,4), labels = c(0,1,2,3,4), las = 2, pos = 0.9,las = 2)
+#axis(2,at = c(0,1,2,3,4,5,6,7,8,9,10,11), labels = c(0,1,2,3,4,5,6,7,8,9,10,11), las = 2, pos = 0.9,las = 2)
 axis(2,at  = 2, labels =  "Observed / Expected",font.axis = 2, line = 3,cex.axis = 2, tick = F)
 axis(2, at = 2,labels =  "shared genes",font.axis = 2, line = 1.4,cex.axis = 2, tick = F)
+#axis(2,at  = 5, labels =  "Observed / Expected",font.axis = 2, line = 3,cex.axis = 2, tick = F)
+#axis(2, at = 5,labels =  "shared genes",font.axis = 2, line = 1.4,cex.axis = 2, tick = F)
 
+main = c("H. petiolaris - H. debilis versus H. bolanderi - H. exilis","H. bolanderi - H. exilis versus H. annuus - H. argophyllus","H. annuus - H. argophyllus versus H. petiolaris - H. debilis")
+legend(y = 4.5,x = 4.5,legend = main, fill = c("#00000099","darkgreen","darkblue"), cex = 0.8,text.font = 4, )
+#legend(y = 11,x = 3.5,legend = main, fill = c("#00000099","darkgreen","darkblue"), cex = 0.8,text.font = 4, )
 dev.print(device=pdf, "figures_2013-03-07/4.quadratic_distrib.pdf",onefile=FALSE)
-dev.off()
-
-lm_xxy = lm((outliers_genes[,4]/outliers_genes[,3])~c(2:21)+I(c(2:21)^2));qftn <- function(x) lm_xxy$coefficients[1] + lm_xxy$coefficients[2]*x + lm_xxy$coefficients[3]*x^2;curve(qftn, 2, 21, add = T, lwd = 3, col = "darkred")
-lm_xxy = lm((outliers_genes[,2]/outliers_genes[,1])~c(2:21)+I(c(2:21)^2));qftn <- function(x) lm_xxy$coefficients[1] + lm_xxy$coefficients[2]*x + lm_xxy$coefficients[3]*x^2;curve(qftn, 2, 21, add = T, lwd = 3, col = "darkgreen")
-axis(side = 1, at = c(1:21)+0.5,labels = paste((top*100),"%", sep = ""),las = "2",font = 2)
-#
-plot(c(2:21),outliers_window[,6]/outliers_window[,5],col = "darkblue", ylim= c(0,7), ylab = "observed/expected parallel windows", xlab = "quantile",xaxt = "n",lwd = 3)
-points(c(2:21),outliers_window[,4]/outliers_window[,3],col = "darkred", ylim= c(0,7),lwd = 3)
-points(c(2:21),outliers_window[,2]/outliers_window[,1],col = "darkgreen", ylim= c(0,7),lwd = 3)
-axis(side = 1, at = c(1:21)+0.5,labels = paste((top*100),"%", sep = ""),las = "2", font = 2)
-
-
-###fitting some curves
-###
-dev.print(device=svg, "results_123/obs_exp_perquantile_genes123.svg",onefile=FALSE)
+#dev.print(device=pdf, "figures_2013-03-07/S1.quadratic_distrib_fixed_quantiles.pdf",onefile=FALSE)
 dev.off()
 
 
